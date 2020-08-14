@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExampleAPI.Models;
+using ExampleAPI.Repository.Authors;
+using ExampleAPI.Contracts;
 
 namespace ExampleAPI.Controllers
 {
@@ -14,25 +16,27 @@ namespace ExampleAPI.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly NetCoreContext _context;
+        private readonly IAuthorRepository _authorRepository;
 
-        public AuthorsController(NetCoreContext context)
+        public AuthorsController(NetCoreContext context, IAuthorRepository authorRepository)
         {
             _context = context;
+            _authorRepository = authorRepository;
         }
 
         // GET: api/Authors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> Getauthors()
         {
-            //return await _context.authors.ToListAsync();
-            return await _context.authors.Include(author => author.Books).ToListAsync();
+            var author = await _authorRepository.GetAll();
+            return Ok(author);
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(long id)
         {
-            var author = await _context.authors.FindAsync(id);
+            var author = await _authorRepository.Get(id);
 
             if (author == null)
             {
@@ -53,11 +57,10 @@ namespace ExampleAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(author).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                _authorRepository.Update(author);
+                await _authorRepository.SaveAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +83,8 @@ namespace ExampleAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-            _context.authors.Add(author);
-            await _context.SaveChangesAsync();
+            _authorRepository.Create(author);
+            await _authorRepository.SaveAsync();
 
             return CreatedAtAction("GetAuthor", new { id = author.ID }, author);
         }
@@ -90,14 +93,15 @@ namespace ExampleAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Author>> DeleteAuthor(long id)
         {
-            var author = await _context.authors.FindAsync(id);
-            if (author == null)
+            var author = await _authorRepository.Get(id);
+
+            if(author == null)
             {
                 return NotFound();
             }
 
-            _context.authors.Remove(author);
-            await _context.SaveChangesAsync();
+            _authorRepository.Delete(author);
+            await _authorRepository.SaveAsync();
 
             return author;
         }
