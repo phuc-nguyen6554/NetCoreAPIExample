@@ -4,14 +4,16 @@ using ExampleAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ExampleAPI.Migrations
 {
     [DbContext(typeof(NetCoreContext))]
-    partial class NetCoreContextModelSnapshot : ModelSnapshot
+    [Migration("20200814064843_add-author-table")]
+    partial class addauthortable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

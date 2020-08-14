@@ -5,14 +5,11 @@ using System.Threading.Tasks;
 
 namespace ExampleAPI.Models
 {
-    public class Book
+    public class Author
     {
         public long ID { get; set; }
         public string Name { get; set; }
-
-        public float Price { get; set; }
-
-        public long AuthorID { get; set; }
-        public Author author { get; set; }
+        public DateTime Birthdate { get; set; }
+        public List<Book> Books { get; set; }
     }
 }
