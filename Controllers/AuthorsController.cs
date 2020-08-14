@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ExampleAPI.Models;
+using ExampleAPI.Models.Authors;
 using ExampleAPI.Repository.Authors;
-using ExampleAPI.Contracts;
+using ExampleAPI.Models;
+using AutoMapper;
 
 namespace ExampleAPI.Controllers
 {
@@ -17,11 +16,13 @@ namespace ExampleAPI.Controllers
     {
         private readonly NetCoreContext _context;
         private readonly IAuthorRepository _authorRepository;
+        private IMapper _mapper;
 
-        public AuthorsController(NetCoreContext context, IAuthorRepository authorRepository)
+        public AuthorsController(NetCoreContext context, IAuthorRepository authorRepository, IMapper mapper)
         {
             _context = context;
             _authorRepository = authorRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Authors
@@ -29,12 +30,13 @@ namespace ExampleAPI.Controllers
         public async Task<ActionResult<IEnumerable<Author>>> Getauthors()
         {
             var author = await _authorRepository.GetAll();
-            return Ok(author);
+            var authorResult = _mapper.Map<IEnumerable<AuthorDTO>>(author);
+            return Ok(authorResult);
         }
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(long id)
+        public async Task<ActionResult<AuthorDTO>> GetAuthor(long id)
         {
             var author = await _authorRepository.Get(id);
 
@@ -43,7 +45,7 @@ namespace ExampleAPI.Controllers
                 return NotFound();
             }
 
-            return author;
+            return _mapper.Map<AuthorDTO>(author);
         }
 
         // PUT: api/Authors/5

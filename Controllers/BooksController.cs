@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExampleAPI.Models;
+using ExampleAPI.Models.Books;
 
 namespace ExampleAPI.Controllers
 {

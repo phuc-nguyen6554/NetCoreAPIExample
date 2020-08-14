@@ -1,4 +1,5 @@
 ﻿using ExampleAPI.Models;
+using ExampleAPI.Models.Authors;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

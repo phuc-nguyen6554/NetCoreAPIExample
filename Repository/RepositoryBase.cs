@@ -17,7 +17,7 @@ namespace ExampleAPI.Repository
         {
             _context = context;
         }
-        public async Task<T> Get(int id)
+        public virtual async Task<T> Get(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
@@ -27,7 +27,7 @@ namespace ExampleAPI.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetByCondition(Expression<Func<T, bool>> expression)
+        public virtual async Task<IEnumerable<T>> GetByCondition(Expression<Func<T, bool>> expression)
         {
             return await _context.Set<T>().Where(expression).ToListAsync();
         }

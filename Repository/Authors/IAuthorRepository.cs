@@ -1,5 +1,6 @@
 ﻿using ExampleAPI.Contracts;
 using ExampleAPI.Models;
+using ExampleAPI.Models.Authors;
 using System;
 using System.Collections.Generic;
 using System.Linq;

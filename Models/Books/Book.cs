@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ExampleAPI.Models.Authors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExampleAPI.Models
+namespace ExampleAPI.Models.Books
 {
     public class Book
     {

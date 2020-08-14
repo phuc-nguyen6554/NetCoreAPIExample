@@ -1,4 +1,5 @@
 ﻿using ExampleAPI.Models;
+using ExampleAPI.Models.Books;
 using System;
 using System.Collections.Generic;
 using System.Linq;

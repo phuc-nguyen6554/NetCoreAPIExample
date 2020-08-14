@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using ExampleAPI.Contracts;
 using ExampleAPI.Models;
 using ExampleAPI.Repository;
@@ -35,6 +36,8 @@ namespace ExampleAPI
             });
 
             services.ConfigureRepository();
+
+            services.AddAutoMapper(typeof(Startup));
             
             services.AddControllers().AddNewtonsoftJson(options =>
                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);     
