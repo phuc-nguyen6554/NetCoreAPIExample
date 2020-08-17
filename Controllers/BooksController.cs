@@ -1,45 +1,54 @@
-﻿using System;
+﻿using AutoMapper;
+using ExampleAPI.Models.Books;
+using ExampleAPI.Repository.Books;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ExampleAPI.Models;
-using ExampleAPI.Models.Books;
 
 namespace ExampleAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="User")]
     public class BooksController : ControllerBase
     {
-        private readonly NetCoreContext _context;
+        //private readonly NetCoreContext _context;
+        private IBookRepository _repository;
+        private IMapper _mapper;
 
-        public BooksController(NetCoreContext context)
+        public BooksController(IBookRepository repository, IMapper mapper)
         {
-            _context = context;
+            //_context = context;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> Getbooks()
+        public async Task<ActionResult<IEnumerable<BookDTO>>> Getbooks()
         {
-            return await _context.books.ToListAsync();
+            var books = await _repository.GetAll();
+            var books_dto = _mapper.Map<IEnumerable<BookDTO>>(books);
+            return books_dto.ToList();
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(long id)
+        public async Task<ActionResult<BookDTO>> GetBook(long id)
         {
-            var book = await _context.books.FindAsync(id);
+            var book = await _repository.Get(id);
+            var bookDto = _mapper.Map<BookDTO>(book);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            return book;
+            return bookDto;
         }
 
         // PUT: api/Books/5
@@ -53,11 +62,10 @@ namespace ExampleAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                _repository.Update(book);
+                await _repository.SaveAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -78,33 +86,43 @@ namespace ExampleAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<BookDTO>> PostBook(CreateBookDTO modelBook)
         {
-            _context.books.Add(book);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-            return CreatedAtAction("GetBook", new { id = book.ID }, book);
+            var book = _mapper.Map<Book>(modelBook);
+
+            _repository.Create(book);
+            await _repository.SaveAsync();
+
+            var bookDTO = _mapper.Map<BookDTO>(book);
+
+            return CreatedAtAction("GetBook", new { id = book.ID }, bookDTO);
         }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Book>> DeleteBook(long id)
         {
-            var book = await _context.books.FindAsync(id);
+            var book = await _repository.Get(id);
             if (book == null)
             {
                 return NotFound();
             }
 
-            _context.books.Remove(book);
-            await _context.SaveChangesAsync();
+            _repository.Delete(book);
+            await _repository.SaveAsync();
 
             return book;
         }
 
         private bool BookExists(long id)
         {
-            return _context.books.Any(e => e.ID == id);
+            var book = _repository.Get(id);
+            return book != null;
         }
     }
 }

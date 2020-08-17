@@ -8,11 +8,13 @@ using ExampleAPI.Repository.Authors;
 using ExampleAPI.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExampleAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class AuthorsController : ControllerBase
     {
         private readonly NetCoreContext _context;
@@ -27,7 +29,7 @@ namespace ExampleAPI.Controllers
         }
 
         // GET: api/Authors
-        [Authorize]
+        [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> Getauthors()
         {
@@ -100,7 +102,7 @@ namespace ExampleAPI.Controllers
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Author>> DeleteAuthor(long id)
+        public async Task<ActionResult<AuthorDTO>> DeleteAuthor(long id)
         {
             var author = await _authorRepository.Get(id);
 
@@ -112,7 +114,9 @@ namespace ExampleAPI.Controllers
             _authorRepository.Delete(author);
             await _authorRepository.SaveAsync();
 
-            return author;
+            var authorDto = _mapper.Map<AuthorDTO>(author);
+
+            return authorDto;
         }
 
         private bool AuthorExists(long id)

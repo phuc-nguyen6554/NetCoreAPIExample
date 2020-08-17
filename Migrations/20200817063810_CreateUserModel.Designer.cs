@@ -4,14 +4,16 @@ using ExampleAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ExampleAPI.Migrations
 {
     [DbContext(typeof(NetCoreContext))]
-    partial class NetCoreContextModelSnapshot : ModelSnapshot
+    [Migration("20200817063810_CreateUserModel")]
+    partial class CreateUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,22 +158,6 @@ namespace ExampleAPI.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "5227b3ff-a012-4d7d-9cc8-16066b6cf8bb",
-                            ConcurrencyStamp = "5a318f01-1b5b-429c-aefb-889b47d6781b",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "fd13b872-f932-423e-8cba-7b04ee5cd3f7",
-                            ConcurrencyStamp = "5102f28d-8ff4-4071-896c-08afda28539e",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

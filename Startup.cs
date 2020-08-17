@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using ExampleAPI.Contracts;
+using ExampleAPI.Middleware;
 using ExampleAPI.Models;
 using ExampleAPI.Models.Users;
 using ExampleAPI.Repository;
@@ -71,6 +72,8 @@ namespace ExampleAPI
             });
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<RequestLoggingMiddleware>();
 
             app.UseRouting();
 

@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace ExampleAPI.Repository.Books
 {
-    interface IBookRepository : IRepositoryBase<Book>
+    public interface IBookRepository : IRepositoryBase<Book>
     {
+        public Task<Book> Get(long id);
     }
 }

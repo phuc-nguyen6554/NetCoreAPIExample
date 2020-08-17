@@ -4,14 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExampleAPI.Models.Users
+namespace ExampleAPI.Models.Books
 {
-    public class LoginUser
+    public class CreateBookDTO
     {
         [Required]
-        public string UserName { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public float ?Price { get; set; }
+        public long AuthorID { get; set; }
     }
 }
