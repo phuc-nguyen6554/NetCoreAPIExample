@@ -12,6 +12,7 @@ namespace ExampleAPI
         public MappingProfile()
         {
             CreateMap<Author, AuthorDTO>();
+            CreateMap<CreateAuthorDTO, Author>();
         }
     }
 }

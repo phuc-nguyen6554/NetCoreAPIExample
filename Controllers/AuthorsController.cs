@@ -7,6 +7,7 @@ using ExampleAPI.Models.Authors;
 using ExampleAPI.Repository.Authors;
 using ExampleAPI.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ExampleAPI.Controllers
 {
@@ -26,6 +27,7 @@ namespace ExampleAPI.Controllers
         }
 
         // GET: api/Authors
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> Getauthors()
         {
@@ -83,12 +85,17 @@ namespace ExampleAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(Author author)
+        public async Task<ActionResult<CreateAuthorDTO>> PostAuthor([FromBody]CreateAuthorDTO createAuthor)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest("Invalid");
+            }
+            var author = _mapper.Map<Author>(createAuthor);
             _authorRepository.Create(author);
             await _authorRepository.SaveAsync();
 
-            return CreatedAtAction("GetAuthor", new { id = author.ID }, author);
+            return CreatedAtAction("GetAuthor", new { id = author.ID }, createAuthor);
         }
 
         // DELETE: api/Authors/5
